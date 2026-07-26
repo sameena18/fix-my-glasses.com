@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="staff-header">
+  <div class="logo" style="color:#fff;"><div class="glyph"><span class="l"></span><span class="r"></span></div>Admin Panel</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="role-tag">Admin</span>
+    <a class="icon-btn" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:#fff;" href="{{ url_for('staff_logout') }}">✕</a>
+  </div>
+</div>
+<div class="tabs">
+  <a class="tab" href="#orders" onclick="showTab('orders')" id="tab-orders">Orders</a>
+  <a class="tab" href="#stock" onclick="showTab('stock')" id="tab-stock">Stock</a>
+  <a class="tab" href="#payments" onclick="showTab('payments')" id="tab-payments">QR & Payments</a>
+  <a class="tab" href="#users" onclick="showTab('users')" id="tab-users">Users</a>
+  <a class="tab" href="#campaigns" onclick="showTab('campaigns')" id="tab-campaigns">Ads & Campaigns</a>
+</div>
+<div class="admin-content">
+  <div class="stat-grid">
+    <div class="stat-card"><div class="num">{{ orders|length }}</div><div class="lab">Total orders</div></div>
+    <div class="stat-card"><div class="num">{{ orders|selectattr('status','equalto','Pending')|list|length }}</div><div class="lab">Awaiting approval</div></div>
+  </div>
+
+  <div class="tab-panel" id="panel-orders">
+    {% if not orders %}
+    <div class="empty-state"><span class="em-icon">📭</span>No orders placed yet.</div>
+    {% endif %}
+    {% for o in orders %}
+    <div class="admin-row" style="flex-direction:column;align-items:stretch;">
+      <div style="display:flex;justify-content:space-between;">
+        <div class="info"><b>{{ o.order_code }}</b><small>{{ o.frame.name }} · {{ o.lens_type }} · ₹{{ o.total_amount }} · +91 {{ o.user.phone }}</small></div>
+        <span class="status-pill st-{{ o.status.lower() }}">{{ o.status }}</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        {% if o.status == 'Pending' %}
+        <form method="post" action="{{ url_for('admin_update_order', order_id=o.id) }}"><input type="hidden" name="status" value="Approved"><button class="btn btn-success btn-sm">Approve</button></form>
+        <form method="post" action="{{ url_for('admin_update_order', order_id=o.id) }}"><input type="hidden" name="status" value="Cancelled"><button class="btn btn-danger btn-sm">Cancel</button></form>
+        {% elif o.status == 'Approved' %}
+        <form method="post" action="{{ url_for('admin_update_order', order_id=o.id) }}"><input type="hidden" name="status" value="Processing"><button class="btn btn-outline btn-sm">Mark Processing</button></form>
+        {% elif o.status == 'Processing' %}
+        <form method="post" action="{{ url_for('admin_update_order', order_id=o.id) }}"><input type="hidden" name="status" value="Shipped"><button class="btn btn-outline btn-sm">Mark Shipped</button></form>
+        {% elif o.status == 'Shipped' %}
+        <form method="post" action="{{ url_for('admin_update_order', order_id=o.id) }}"><input type="hidden" name="status" value="Delivered"><button class="btn btn-outline btn-sm">Mark Delivered</button></form>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="tab-panel" id="panel-stock" style="display:none;">
+    {% for f in frames %}
+    <div class="admin-row">
+      <div class="info" style="display:flex;align-items:center;gap:10px;">
+        <div class="frame-swatch" style="width:44px;height:38px;background:{{ f.color_hex }}22;">
+          <svg width="34" height="16" viewBox="0 0 64 26"><circle cx="14" cy="13" r="11" fill="none" stroke="{{ f.color_hex }}" stroke-width="3.2"/><circle cx="50" cy="13" r="11" fill="none" stroke="{{ f.color_hex }}" stroke-width="3.2"/></svg>
+        </div>
+        <div><b>{{ f.name }}</b><small>₹{{ f.price }}</small></div>
+      </div>
+      <form method="post" action="{{ url_for('admin_update_stock', frame_id=f.id) }}" style="display:flex;gap:8px;align-items:center;">
+        <input type="number" class="stock-input" name="stock" value="{{ f.stock }}">
+        <button class="btn btn-sm btn-outline" type="submit">Save</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="tab-panel" id="panel-payments" style="display:none;">
+    <div class="card">
+      <div class="admin-row" style="border:none;padding:0;margin-bottom:14px;">
+        <div class="info"><b>Accept QR/UPI payments</b><small>Turn off to pause checkout temporarily</small></div>
+        <form method="post" action="{{ url_for('admin_toggle_qr') }}" class="toggle-form">
+          <button type="submit" class="toggle-btn {{ 'on' if qr_enabled else '' }}"></button>
+        </form>
+      </div>
+      <form method="post" action="{{ url_for('admin_update_qr_note') }}">
+        <div class="field">
+          <label>Payment note shown to customers</label>
+          <input type="text" name="note" value="{{ payment_note }}">
+        </div>
+        <button class="btn btn-outline btn-sm" type="submit">Save note</button>
+      </form>
+      <p style="font-size:12px;color:var(--ink-soft);margin-top:12px;">In production this section uploads the live merchant QR image and rotates UPI IDs, wired to Razorpay/PayU (see services/payment_service.py).</p>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-users" style="display:none;">
+    {% if not users %}
+    <div class="empty-state"><span class="em-icon">👥</span>No registered users yet.</div>
+    {% endif %}
+    {% for u in users %}
+    <div class="admin-row">
+      <div class="info"><b>+91 {{ u.phone }}</b><small>Joined {{ u.created_at.strftime('%d %b %Y') }} · {{ u.orders|length }} order(s)</small></div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="tab-panel" id="panel-campaigns" style="display:none;">
+    {% for c in campaigns %}
+    <div class="admin-row">
+      <div class="info"><b>{{ c.title }}</b><small>{{ c.subtitle }}</small></div>
+      <form method="post" action="{{ url_for('admin_toggle_campaign', campaign_id=c.id) }}" class="toggle-form">
+        <button type="submit" class="toggle-btn {{ 'on' if c.active else '' }}"></button>
+      </form>
+    </div>
+    {% endfor %}
+    <p style="font-size:12px;color:var(--ink-soft);margin-top:10px;">Toggle a campaign to run/pause it on the customer home page instantly.</p>
+  </div>
+</div>
+<script>
+  function showTab(name){
+    document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
+    document.getElementById('panel-'+name).style.display='block';
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    history.replaceState(null,'','#'+name);
+  }
+  showTab((location.hash||'#orders').slice(1));
+</script>
+{% endblock %}

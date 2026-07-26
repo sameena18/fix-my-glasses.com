@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+  <div class="auth-hero">
+    <div class="glyph-big"><span class="l"></span><span class="r"></span></div>
+    <h1>FixMyGlasses.com</h1>
+    <p>Custom eyewear, delivered. Log in with your mobile number.</p>
+  </div>
+  <form method="post">
+    <div class="field">
+      <label>Mobile Number</label>
+      <input type="tel" name="phone" maxlength="10" pattern="\d{10}" placeholder="Enter 10-digit mobile number" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Send OTP</button>
+  </form>
+  <div style="text-align:center;margin-top:16px;">
+    <a class="back-link" href="{{ url_for('staff_login') }}">Staff / Admin login →</a>
+  </div>
+</div>
+{% endblock %}

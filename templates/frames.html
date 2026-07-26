@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <a class="icon-btn" href="{{ url_for('home') }}">←</a>
+  <div class="actions">
+    <a class="icon-btn" href="{{ url_for('my_orders') }}">🚚</a>
+    <a class="icon-btn" href="{{ url_for('logout') }}">👤</a>
+  </div>
+</div>
+<div class="content">
+  <h2 style="margin:0 0 4px;">Choose your frame</h2>
+  <p style="color:var(--ink-soft);font-size:13px;margin:0 0 16px;">Step 1 of 3</p>
+  <div class="frame-grid">
+    {% for f in frames %}
+    <a class="frame-card" style="{{ 'opacity:.5;pointer-events:none;' if f.stock==0 else '' }}" href="{{ url_for('select_frame', frame_id=f.id) }}">
+      <div class="frame-swatch" style="background:{{ f.color_hex }}22;">
+        <svg width="64" height="26" viewBox="0 0 64 26"><circle cx="14" cy="13" r="11" fill="none" stroke="{{ f.color_hex }}" stroke-width="3.2"/><circle cx="50" cy="13" r="11" fill="none" stroke="{{ f.color_hex }}" stroke-width="3.2"/><line x1="25" y1="13" x2="39" y2="13" stroke="{{ f.color_hex }}" stroke-width="3.2"/></svg>
+      </div>
+      <p class="frame-name">{{ f.name }}</p>
+      <p class="frame-meta">
+        {% if f.stock==0 %}<span class="stock-tag stock-out">Out of stock</span>
+        {% elif f.stock<=4 %}<span class="stock-tag stock-low">Only {{ f.stock }} left</span>
+        {% else %}<span class="stock-tag stock-in">In stock</span>{% endif %}
+      </p>
+      <p class="frame-price">₹{{ f.price }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% include "_bottom_nav.html" with context %}
+{% endblock %}

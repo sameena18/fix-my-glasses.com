@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <a class="logo" href="{{ url_for('home') }}"><div class="glyph"><span class="l"></span><span class="r"></span></div>FixMyGlasses</a>
+  <div class="actions">
+    <a class="icon-btn" href="{{ url_for('my_orders') }}" title="My Orders">🚚</a>
+    <a class="icon-btn" href="{{ url_for('logout') }}" title="Log out">👤</a>
+  </div>
+</div>
+<div class="content">
+  {% for c in campaigns %}
+  <div class="campaign" style="background:{{ c.bg_gradient }}">
+    <div class="ring"></div>
+    <small>Ad · Campaign</small>
+    <h3>{{ c.title }}</h3>
+    <p>{{ c.subtitle }}</p>
+  </div>
+  {% endfor %}
+
+  <div class="section-title"><h2>Shop by category</h2></div>
+  <div class="cat-grid">
+    <a class="cat-tile" href="{{ url_for('frames') }}"><span class="emoji">👓</span><span>Eyeglasses</span></a>
+    <a class="cat-tile" href="{{ url_for('frames') }}"><span class="emoji">🕶️</span><span>Sunglasses</span></a>
+    <a class="cat-tile" href="{{ url_for('frames') }}"><span class="emoji">🔍</span><span>Zero Power</span></a>
+  </div>
+
+  <div class="section-title"><h2>Popular frames</h2><a href="{{ url_for('frames') }}" style="font-size:12px;color:var(--ink-soft);">See all</a></div>
+  <div class="frame-grid">
+    {% for f in frames %}
+    <a class="frame-card" href="{{ url_for('select_frame', frame_id=f.id) }}">
+      <div class="frame-swatch" style="background:{{ f.color_hex }}22;">
+        <svg width="64" height="26" viewBox="0 0 64 26"><circle cx="14" cy="13" r="11" fill="none" stroke="{{ f.color_hex }}" stroke-width="3.2"/><circle cx="50" cy="13" r="11" fill="none" stroke="{{ f.color_hex }}" stroke-width="3.2"/><line x1="25" y1="13" x2="39" y2="13" stroke="{{ f.color_hex }}" stroke-width="3.2"/></svg>
+      </div>
+      <p class="frame-name">{{ f.name }}</p>
+      <p class="frame-price">₹{{ f.price }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% include "_bottom_nav.html" with context %}
+{% endblock %}
