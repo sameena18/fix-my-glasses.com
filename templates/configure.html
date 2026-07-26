@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <a class="icon-btn" href="{{ url_for('frames') }}">←</a>
+  <div class="actions">
+    <a class="icon-btn" href="{{ url_for('my_orders') }}">🚚</a>
+    <a class="icon-btn" href="{{ url_for('logout') }}">👤</a>
+  </div>
+</div>
+<div class="content">
+  <h2 style="margin:0 0 4px;">Configure your lenses</h2>
+  <p style="color:var(--ink-soft);font-size:13px;margin:0 0 16px;">Step 2 of 3 · {{ frame.name }}</p>
+
+  <form method="post" enctype="multipart/form-data" id="configForm">
+    <div class="card">
+      <p style="font-weight:600;margin:0 0 12px;">Power type</p>
+      <div class="option-grid">
+        <label class="option-card" data-power="zero">
+          <input type="radio" name="power_type" value="zero" required onclick="showPowerBlock('zero')">
+          <span class="oicon">🕶️</span><span class="oname">Zero Power</span>
+          <span class="oprice">No prescription needed</span>
+        </label>
+        <label class="option-card" data-power="powered">
+          <input type="radio" name="power_type" value="powered" onclick="showPowerBlock('powered')">
+          <span class="oicon">✍️</span><span class="oname">Powered</span>
+          <span class="oprice">Enter power manually</span>
+        </label>
+        <label class="option-card" data-power="upload">
+          <input type="radio" name="power_type" value="upload" onclick="showPowerBlock('upload')">
+          <span class="oicon">📄</span><span class="oname">Upload Prescription</span>
+          <span class="oprice">We'll verify it</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card" id="poweredBlock" style="display:none;">
+      <div class="field" style="margin-bottom:10px;">
+        <label>Right Eye (SPH)</label>
+        <input type="text" name="right_eye" placeholder="e.g. -1.25">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Left Eye (SPH)</label>
+        <input type="text" name="left_eye" placeholder="e.g. -1.00">
+      </div>
+    </div>
+
+    <div class="card" id="uploadBlock" style="display:none;">
+      <label class="upload-box">
+        <span style="font-size:22px;display:block;margin-bottom:6px;">⬆️</span>
+        <span style="font-weight:600;font-size:14px;">Tap to upload prescription</span><br>
+        <span style="font-size:12px;color:var(--ink-soft);">JPG, PNG or PDF</span>
+        <input type="file" name="prescription" accept="image/*,.pdf">
+      </label>
+    </div>
+
+    <div class="card">
+      <p style="font-weight:600;margin:0 0 12px;">Lens type</p>
+      <div class="option-grid">
+        {% for name, price in lens_prices.items() %}
+        <label class="option-card">
+          <input type="radio" name="lens_type" value="{{ name }}" required>
+          <span class="oicon">{{ '👁️' if name=='Single Vision' else '🔀' if name=='Progressive' else '◯' if name=='Zero Power' else '🎨' }}</span>
+          <span class="oname">{{ name }}</span>
+          <span class="oprice">{{ 'Included' if price==0 else '+₹' ~ price }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Continue to Summary</button>
+  </form>
+</div>
+<script>
+  function showPowerBlock(type){
+    document.getElementById('poweredBlock').style.display = type==='powered' ? 'block' : 'none';
+    document.getElementById('uploadBlock').style.display = type==='upload' ? 'block' : 'none';
+    document.querySelectorAll('.option-card[data-power]').forEach(el=>{
+      el.classList.toggle('selected', el.dataset.power===type);
+    });
+  }
+  // highlight lens-type card on click too
+  document.querySelectorAll('.option-card input[name=lens_type]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      document.querySelectorAll('.option-card input[name=lens_type]').forEach(i=>i.closest('.option-card').classList.remove('selected'));
+      inp.closest('.option-card').classList.add('selected');
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+  <div class="auth-hero">
+    <div class="glyph-big"><span class="l"></span><span class="r"></span></div>
+    <h1>Verify OTP</h1>
+    <p>Code sent to +91 {{ phone }}</p>
+  </div>
+  {% if mock_mode %}
+  <div class="demo-hint">Demo mode: no real SMS is sent — the OTP is <b>{{ mock_code }}</b></div>
+  {% endif %}
+  <form method="post">
+    <div class="field">
+      <label>Enter OTP</label>
+      <input type="text" name="otp" maxlength="4" placeholder="4-digit code" style="letter-spacing:6px;font-size:18px;text-align:center;" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Verify & Continue</button>
+  </form>
+  <div style="text-align:center;margin-top:14px;">
+    <a class="btn-link" href="{{ url_for('login') }}">Change number</a>
+  </div>
+</div>
+{% endblock %}

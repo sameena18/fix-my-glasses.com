@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <a class="icon-btn" href="{{ url_for('summary') }}">←</a>
+  <div class="actions">
+    <a class="icon-btn" href="{{ url_for('logout') }}">👤</a>
+  </div>
+</div>
+<div class="content">
+  <h2 style="text-align:center;margin:6px 0 2px;">Scan & Pay</h2>
+  <p style="text-align:center;color:var(--ink-soft);font-size:13px;">{{ qr.note }}</p>
+  <div class="qr-wrap">
+    <div class="qr-frame">
+      <svg viewBox="0 0 180 180" width="100%" height="100%">
+        {% for y in range(14) %}
+          {% for x in range(14) %}
+            {% set corner = (x < 3 and y < 3) or (x > 10 and y < 3) or (x < 3 and y > 10) %}
+            {% set on = (x==0 or y==0 or x==2 or y==2 or x==13 or y==13) if corner else ((x*7 + y*13 + x*y) % 5 < 2) %}
+            {% if on %}
+            <rect x="{{ x*12.85 }}" y="{{ y*12.85 }}" width="11.6" height="11.6" fill="#211C17"></rect>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </svg>
+    </div>
+    <div class="qr-amount">₹{{ total }}</div>
+    <div class="qr-note">UPI ID: {{ qr.upi_id }}</div>
+  </div>
+  <form method="post" action="{{ url_for('payment_confirm') }}">
+    <button class="btn btn-primary" type="submit">I've completed the payment</button>
+  </form>
+  <div style="text-align:center;margin-top:12px;">
+    <a class="btn-link" href="{{ url_for('summary') }}">Cancel and go back</a>
+  </div>
+</div>
+{% endblock %}

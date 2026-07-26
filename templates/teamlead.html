@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="staff-header">
+  <div class="logo" style="color:#fff;"><div class="glyph"><span class="l"></span><span class="r"></span></div>Team Leader Panel</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="role-tag">Team Leader</span>
+    <a class="icon-btn" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:#fff;" href="{{ url_for('staff_logout') }}">✕</a>
+  </div>
+</div>
+<div class="admin-content" style="padding-top:18px;">
+  <div class="stat-grid">
+    <div class="stat-card"><div class="num">{{ orders|length }}</div><div class="lab">In progress</div></div>
+    <div class="stat-card"><div class="num">{{ delivered_count }}</div><div class="lab">Delivered</div></div>
+  </div>
+  <p style="font-size:13px;color:var(--ink-soft);margin:0 0 12px;">Team leaders move approved orders through fulfilment. Approving/cancelling and store settings stay with Admin.</p>
+  {% if not orders %}
+  <div class="empty-state"><span class="em-icon">✅</span>No orders in progress right now.</div>
+  {% endif %}
+  {% for o in orders %}
+  <div class="admin-row" style="flex-direction:column;align-items:stretch;">
+    <div style="display:flex;justify-content:space-between;">
+      <div class="info"><b>{{ o.order_code }}</b><small>{{ o.frame.name }} · {{ o.lens_type }} · +91 {{ o.user.phone }}</small></div>
+      <span class="status-pill st-{{ o.status.lower() }}">{{ o.status }}</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      {% if o.status == 'Approved' %}
+      <form method="post" action="{{ url_for('teamlead_update_order', order_id=o.id) }}"><button class="btn btn-outline btn-sm">Mark Processing</button></form>
+      {% elif o.status == 'Processing' %}
+      <form method="post" action="{{ url_for('teamlead_update_order', order_id=o.id) }}"><button class="btn btn-outline btn-sm">Mark Shipped</button></form>
+      {% elif o.status == 'Shipped' %}
+      <form method="post" action="{{ url_for('teamlead_update_order', order_id=o.id) }}"><button class="btn btn-outline btn-sm">Mark Delivered</button></form>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

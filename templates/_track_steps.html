@@ -1,0 +1,14 @@
+{% set steps = ['Pending','Approved','Processing','Shipped','Delivered'] %}
+{% if order.status == 'Cancelled' %}
+<div class="card"><div style="text-align:center;color:var(--danger);font-weight:600;">✕ Order Cancelled by Admin</div></div>
+{% else %}
+{% set idx = steps.index(order.status) %}
+<div class="track">
+  {% for s in steps %}
+  <div class="track-step {{ 'done' if loop.index0 < idx else 'current' if loop.index0 == idx else '' }}">
+    <div class="track-dot">{{ '✓' if loop.index0 < idx else loop.index }}</div>
+    <span>{{ s }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <a class="icon-btn" href="{{ url_for('configure') }}">←</a>
+  <div class="actions">
+    <a class="icon-btn" href="{{ url_for('my_orders') }}">🚚</a>
+    <a class="icon-btn" href="{{ url_for('logout') }}">👤</a>
+  </div>
+</div>
+<div class="content">
+  <h2 style="margin:0 0 4px;">Order summary</h2>
+  <p style="color:var(--ink-soft);font-size:13px;margin:0 0 16px;">Step 3 of 3</p>
+  <div class="card">
+    <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;">
+      <div class="frame-swatch" style="width:70px;height:60px;flex:none;background:{{ frame.color_hex }}22;">
+        <svg width="56" height="24" viewBox="0 0 64 26"><circle cx="14" cy="13" r="11" fill="none" stroke="{{ frame.color_hex }}" stroke-width="3.2"/><circle cx="50" cy="13" r="11" fill="none" stroke="{{ frame.color_hex }}" stroke-width="3.2"/><line x1="25" y1="13" x2="39" y2="13" stroke="{{ frame.color_hex }}" stroke-width="3.2"/></svg>
+      </div>
+      <div>
+        <p class="frame-name" style="margin-bottom:2px;">{{ frame.name }}</p>
+        <p class="frame-meta" style="margin:0;">
+          {{ 'Zero Power' if cart.power_type=='zero' else 'Powered (manual entry)' if cart.power_type=='powered' else 'Powered (prescription uploaded)' }} · {{ cart.lens_type }}
+        </p>
+      </div>
+    </div>
+    <div class="summary-row"><span>Frame</span><span>₹{{ frame.price }}</span></div>
+    <div class="summary-row"><span>{{ cart.lens_type }} lens</span><span>{{ 'Included' if lens_price==0 else '₹' ~ lens_price }}</span></div>
+    <div class="summary-row total"><span>Total</span><span>₹{{ total }}</span></div>
+  </div>
+  <a class="btn btn-accent" href="{{ url_for('payment') }}">Pay ₹{{ total }} via QR</a>
+</div>
+{% endblock %}
