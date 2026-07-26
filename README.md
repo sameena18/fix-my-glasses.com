@@ -93,3 +93,39 @@ static/uploads/            Uploaded prescription files land here
   set, but consider virus scanning if you accept public uploads at scale.
 - Add HTTPS (e.g. behind Nginx + Let's Encrypt, or a platform like Render/
   Railway/PythonAnywhere) before handling real phone numbers or payments.
+
+
+## 📸 Project Screenshots
+
+### 🔐 Login Page
+![Login](screenshots/login.png)
+
+### 📲 OTP Verification
+![OTP Verification](screenshots/verify.png)
+
+### 🏠 Home Page
+![Home](screenshots/home.png)
+
+### 👓 Frame Selection
+![Frames](screenshots/frames.png)
+
+### 🔍 Lens Selection
+![Lens Selection](screenshots/lens%20selection.png)
+
+### 📋 Order Summary
+![Order Summary](screenshots/order%20summary.png)
+
+### 💳 QR Code Payment
+![Payment](screenshots/payment.png)
+
+### ✅ Order Success
+![Order Success](screenshots/order%20success.png)
+
+### 🚚 Order Tracking
+![Tracking](screenshots/tracking.png)
+
+### 🔑 Admin Login
+![Admin Login](screenshots/admin%20login.png)
+
+### 📊 Admin Dashboard
+![Admin Dashboard](screenshots/admin%20dashboard.png)
