@@ -1,3 +1,14 @@
+
+# 👓 Fix My Glasses
+
+🌐 **Live Demo:** https://fix-my-glasses-com.onrender.com
+
+📂 **GitHub Repository:** https://github.com/sameena18/fix-my-glasses.com
+
+Fix My Glasses is a full-stack Flask web application for ordering eyeglasses online. Users can browse frames, choose lens types, upload prescriptions, make QR-code payments, track orders, and access an admin dashboard for order and inventory management.
+
+---
+
 # FixMyGlasses.com
 
 A full-stack eyewear ordering website: mobile OTP login, home campaigns/ads,
